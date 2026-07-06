@@ -4,8 +4,8 @@ import librosa
 import os,sys,shutil,argparse,copy,pickle
 import math,scipy
 from faceformer import Faceformer
-from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2Processor
-
+from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2Processor,TRANSFORMERS_CACHE
+from pathlib import Path
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,19 +13,22 @@ import torch.nn.functional as F
 import cv2
 import tempfile
 from subprocess import call
-os.environ['PYOPENGL_PLATFORM'] = 'osmesa' # egl
-import pyrender
-from psbody.mesh import Mesh
-import trimesh
+#os.environ['PYOPENGL_PLATFORM'] = 'osmesa' # egl
+#import pyrender
+#from psbody.mesh import Mesh
+#import trimesh
 
 @torch.no_grad()
 def test_model(args):
+    cache_dir   = Path(TRANSFORMERS_CACHE).parent
+    wav2vec_dir = cache_dir/"hub"/"models--facebook--wav2vec2-base-960h"
+    wav2vec_dir= wav2vec_dir/"snapshots"/"22aad52d435eb6dbaf354bdad9b0da84ce7d6156"
     if not os.path.exists(args.result_path):
         os.makedirs(args.result_path)
 
     #build model
-    model = Faceformer(args)
-    model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name))))
+    model = Faceformer(args,wav2vec_dir)
+    model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name)),map_location=torch.device(args.device)))
     model = model.to(torch.device(args.device))
     model.eval()
 
@@ -50,7 +53,7 @@ def test_model(args):
     wav_path = args.wav_path
     test_name = os.path.basename(wav_path).split(".")[0]
     speech_array, sampling_rate = librosa.load(os.path.join(wav_path), sr=16000)
-    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+    processor = Wav2Vec2Processor.from_pretrained(wav2vec_dir)#"facebook/wav2vec2-base-960h"
     audio_feature = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
     audio_feature = np.reshape(audio_feature,(-1,audio_feature.shape[0]))
     audio_feature = torch.FloatTensor(audio_feature).to(device=args.device)
@@ -199,7 +202,7 @@ def main():
     args = parser.parse_args()   
 
     test_model(args)
-    render_sequence(args)
+    #render_sequence(args)
 
 if __name__=="__main__":
     main()
