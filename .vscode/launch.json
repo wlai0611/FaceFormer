@@ -16,9 +16,32 @@
                         "--test_subjects", "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA",
                         "--condition","FaceTalk_170913_03279_TA","--subject","FaceTalk_170809_00138_TA"
                 ],
-
-
                 "justMyCode": false,
+                "python":"C:\\Users\\Walter\\Desktop\\phd\\boston\\research\\dynamic_mode_decomposition\\image_processing\\torch_cv2\\Scripts\\python.exe"
+            },
+            {
+                "name": "render",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "render.py",
+                "console": "integratedTerminal",
+                "args":["--dataset","vocaset",
+                       "--vertice_dim","15069",
+                        "--fps","30",
+                        "--pred_path","demo/result",
+                        "--output","demo/render"
+                ],
+                "justMyCode": false,
+                "python":"C:\\Users\\Walter\\Documents\\render_env\\Scripts\\python.exe"
+            },
+            {
+                "name": "simple_render",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "simple_render.py",
+                "console": "integratedTerminal",
+                "justMyCode": false,
+                "python":"C:\\Users\\Walter\\Documents\\render_env\\Scripts\\python.exe"
             }
     ]
 }
