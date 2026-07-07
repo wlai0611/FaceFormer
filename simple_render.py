@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import trimesh
 import pyrender
+import argparse
+from pathlib import Path
 
 # If you're on Windows / normal desktop, you may NOT want osmesa.
 # Try leaving this unset first.
@@ -155,7 +157,15 @@ def mux_audio_video(video_path, wav_path, out_path):
     subprocess.run(cmd, check=True)
 
 if __name__=="__main__":
-  pred = np.load("demo/result/test.npy")
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--npy",help='path to NPY file of predictions from FaceFormer')
+  parser.add_argument("--wav",help="WAV file of audio")
+  args = parser.parse_args()
+  npy_file = Path(args.npy)
+  parent_folder = npy_file.parent
+  silent_mp4_file = parent_folder/f"{npy_file.stem}.mp4"
+  audio_mp4_file  = parent_folder/f"{npy_file.stem}_audio.mp4"
+  pred = np.load(npy_file)
 
   # if flattened, reshape it
   if pred.ndim == 2 and pred.shape[1] == 5023 * 3:
@@ -164,7 +174,8 @@ if __name__=="__main__":
   render_sequence_to_mp4(
     sequence_vertices=pred,
     template_ply="vocaset/templates/FLAME_sample.ply",
-    out_mp4="prediction_render.mp4",
+    out_mp4=silent_mp4_file,
     fps=30,   # FaceFormer used 30 for vocaset rendering script
     background_black=True
   )
+  mux_audio_video(silent_mp4_file.as_posix(),args.wav,audio_mp4_file.as_posix())
