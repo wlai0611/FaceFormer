@@ -43,6 +43,36 @@
                 "justMyCode": false,
                 "python":"C:\\Users\\Walter\\Documents\\render_env\\Scripts\\python.exe",
                 "args":["--wav", "../caer/videos/CAER/test/Anger/0240.wav", "--npy","demo/result/0240.npy"]
+            },
+            {
+                "name": "train",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "main.py",
+                "console": "integratedTerminal",
+                "justMyCode": false,
+                "python":"C:\\Users\\Walter\\Desktop\\phd\\boston\\research\\dynamic_mode_decomposition\\image_processing\\torch_cv2\\Scripts\\python.exe",
+                "args":["--train_subjects", "FaceTalk_170725_00137_TA",
+                        "--test_subjects","FaceTalk_170728_03272_TA",
+                        "--val_subjects","FaceTalk_170811_03274_TA",
+                "--dataset","vocaset","--vertice_dim","15069","--feature_dim","64","--period","30",
+                "--device","cpu" ,"--teacher_forcing"
+                ]
+            },
+            {
+                "name": "preprocess",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "vocaset\\process_voca_data.py",
+                "console": "integratedTerminal",
+                "justMyCode": false,
+                "python":"C:\\Users\\Walter\\Desktop\\phd\\boston\\research\\dynamic_mode_decomposition\\image_processing\\torch_cv2\\Scripts\\python.exe",
+                "args":["--verts_path","..\\voca_set\\trainingdata\\data_verts.npy",
+                        "--raw_audio_path","..\\voca_set\\trainingdata\\raw_audio_fixed.pkl",
+                        "--data2array_verts_path","..\\voca_set\\trainingdata\\subj_seq_to_idx.pkl",
+                        "--vertices_npy_path","vocaset\\vertices_npy",
+                        "--wav_path","vocaset\\wav"
+                ]                
             }
     ]
 }
